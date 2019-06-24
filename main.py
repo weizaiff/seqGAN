@@ -33,7 +33,7 @@ pretrained_gen_path = './gen_MLEtrain_EMBDIM32_HIDDENDIM32_VOCAB5000_MAXSEQLEN20
 pretrained_dis_path = './dis_pretrain_EMBDIM_64_HIDDENDIM64_VOCAB5000_MAXSEQLEN20.trc'
 
 
-def train_generator_MLE(gen, gen_opt, oracle, real_data_samples, epochs):
+def train_generator_MLE(gen, gen_opt, oracle, real_data_samples, epochs):#使用的是正常的数据预训练
     """
     Max Likelihood Pretraining for the generator
     """
@@ -76,7 +76,7 @@ def train_generator_PG(gen, gen_opt, oracle, dis, num_batches):
     for batch in range(num_batches):
         s = gen.sample(BATCH_SIZE*2)        # 64 works best
         inp, target = helpers.prepare_generator_batch(s, start_letter=START_LETTER, gpu=CUDA)
-        rewards = dis.batchClassify(target)
+        rewards = dis.batchClassify(target)#奖励（target作为输入）！？
 
         gen_opt.zero_grad()
         pg_loss = gen.batchPGLoss(inp, target, rewards)
@@ -103,7 +103,7 @@ def train_discriminator(discriminator, dis_opt, real_data_samples, generator, or
 
     for d_step in range(d_steps):
         s = helpers.batchwise_sample(generator, POS_NEG_SAMPLES, BATCH_SIZE)
-        dis_inp, dis_target = helpers.prepare_discriminator_data(real_data_samples, s, gpu=CUDA)
+        dis_inp, dis_target = helpers.prepare_discriminator_data(real_data_samples, s, gpu=CUDA)#打乱
         for epoch in range(epochs):
             print('d-step %d epoch %d : ' % (d_step + 1, epoch + 1), end='')
             sys.stdout.flush()
