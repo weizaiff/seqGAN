@@ -18,7 +18,7 @@ def prepare_generator_batch(samples, start_letter=0, gpu=False):
 
     inp = torch.zeros(batch_size, seq_len)
     target = samples
-    inp[:, 0] = start_letter
+    inp[:, 0] = start_letter#即平移！
     inp[:, 1:] = target[:, :seq_len-1]
 
     inp = Variable(inp).type(torch.LongTensor)
